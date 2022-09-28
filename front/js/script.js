@@ -33,4 +33,3 @@ fetch('http://localhost:3000/api/products')
     .catch(err => {
         console.error(`Une erreur est survenu ${err}`);
     })
-    

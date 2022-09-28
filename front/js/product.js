@@ -2,11 +2,11 @@ let queryString = window.location.search;
 let id = queryString.slice(4);
 
 
-let colors_place = document.getElementById("colors");
-let sel_colors = document.getElementsByTagName("option");
+let colorsSelect = document.getElementById("colors");
 
-colors_place.remove(2);
-colors_place.remove(1);
+
+colorsSelect.remove(2);
+colorsSelect.remove(1);
 
 fetch(`http://localhost:3000/api/products/${id}`)
     .then(res => {
@@ -15,7 +15,7 @@ fetch(`http://localhost:3000/api/products/${id}`)
         }
     })
     .then(data => {
-        
+
         document.querySelector("article div.item__img > img")
         .setAttribute('src', `${data.imageUrl}`);
         document.querySelector("article div.item__img > img")
@@ -37,9 +37,58 @@ fetch(`http://localhost:3000/api/products/${id}`)
             let color = document.createElement('option');
             color.setAttribute("value", `${element}`);
             color.innerHTML = `${element}`;
-            colors_place.appendChild(color);
+            colorsSelect.appendChild(color);
         }
     })
     .catch(err => {
         console.log(`une erreur est survenue ${err}`);
+    });
+
+
+let btn_addToCart = document.getElementById("addToCart");
+let itemQuantity = document.getElementById("quantity");
+
+btn_addToCart.addEventListener('click', () => {
+        
+        let productImage = document.querySelector("article div.item__img > img"); 
+
+
+        let newProduct = {
+            id: id,
+            quantity: itemQuantity.value,
+            color: colorsSelect.value,
+            image: productImage.src,
+        }
+        
+        let storage = JSON.parse(localStorage.getItem("product"));
+        
+        // if(itemQuantity.value <= 0 || itemQuantity.value > 100){
+        //     console.log("mauvaise valeur");
+        // }
+
+        if (storage) {
+            for (let i = 0; i < storage.length; i++) {
+                let element = storage[i];
+               
+                if (colorsSelect.value === element.color && id === element.id) {
+                    element.quantity = element.quantity + itemQuantity.value;
+                    console.log(element);
+                    console.log("same");
+                }else{
+                    storage.push(newProduct);
+                    localStorage.setItem("product", JSON.stringify(storage));
+                }
+            }
+
+        
+        }else{
+            storage = [];
+            storage.push(newProduct);
+            localStorage.setItem("product", JSON.stringify(storage));
+            console.log(storage);
+        }
+
+
+        // console.log(storage);
+
     })
