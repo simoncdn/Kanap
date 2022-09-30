@@ -45,6 +45,9 @@ fetch(`http://localhost:3000/api/products/${id}`)
     });
 
 
+
+// LOCAL STORAGE // 
+
 let btn_addToCart = document.getElementById("addToCart");
 let itemQuantity = document.getElementById("quantity");
 
@@ -52,9 +55,8 @@ btn_addToCart.addEventListener('click', () => {
         
         let productImage = document.querySelector("article div.item__img > img"); 
 
-
         let newProduct = {
-            id: id,
+            idProduct: id,
             quantity: itemQuantity.value,
             color: colorsSelect.value,
             image: productImage.src,
@@ -62,33 +64,36 @@ btn_addToCart.addEventListener('click', () => {
         
         let storage = JSON.parse(localStorage.getItem("product"));
         
-        // if(itemQuantity.value <= 0 || itemQuantity.value > 100){
+        // if(itemQuantity.value <= 0 || itemQuantity.value > 100 || colorsSelect.value == ""){
         //     console.log("mauvaise valeur");
         // }
 
+
         if (storage) {
-            for (let i = 0; i < storage.length; i++) {
-                let element = storage[i];
-               
-                if (colorsSelect.value === element.color && id === element.id) {
-                    element.quantity = element.quantity + itemQuantity.value;
-                    console.log(element);
-                    console.log("same");
-                }else{
-                    storage.push(newProduct);
+            let productFound = false;
+            storage.forEach(element => {
+                if(element.color === colorsSelect.value && element.idProduct === id){
+                    let elementNb = parseInt(element.quantity);
+                    let quantityNb = parseInt(itemQuantity.value);
+
+                    elementNb += quantityNb;
+                    element.quantity = elementNb.toString();
+
                     localStorage.setItem("product", JSON.stringify(storage));
+                    productFound = true;
                 }
+            });
+            if(productFound === false){
+                storage.push(newProduct);
+                localStorage.setItem("product", JSON.stringify(storage));
             }
 
-        
+            
         }else{
             storage = [];
             storage.push(newProduct);
             localStorage.setItem("product", JSON.stringify(storage));
-            console.log(storage);
         }
-
-
         // console.log(storage);
-
+        
     })

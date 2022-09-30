@@ -1,11 +1,14 @@
-let local = JSON.parse(localStorage.getItem("produit"));
+let storage = JSON.parse(localStorage.getItem("product"));
+console.log(storage);
+
+let productData = {};
 
 
-for (let i = 0; i < local.length; i++) {
-    let product = local[i];
-    console.log(product);
 
-    for (product of local) {
+
+for (let i = 0; i < storage.length; i++) {
+
+    let product = storage[i];
         
         let newCart = document.createElement('article');
         newCart.setAttribute("class", "cart__item");
@@ -48,8 +51,6 @@ for (let i = 0; i < local.length; i++) {
         // description.classList.add('productDescription');
         // description.innerHTML = element.description;
         // article.appendChild(description);
-
-
-    }
+ 
 
 }
