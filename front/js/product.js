@@ -53,13 +53,10 @@ let itemQuantity = document.getElementById("quantity");
 
 btn_addToCart.addEventListener('click', () => {
         
-        let productImage = document.querySelector("article div.item__img > img"); 
-
         let newProduct = {
             idProduct: id,
             quantity: itemQuantity.value,
             color: colorsSelect.value,
-            image: productImage.src,
         }
         
         let storage = JSON.parse(localStorage.getItem("product"));
