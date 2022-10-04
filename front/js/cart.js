@@ -90,11 +90,10 @@ for (let i = 0; i < storage.length; i++) {
 
 
     sumOfProductQuantity += parseInt(product.quantity);
-    document.getElementById('totalQuantity').innerHTML = `${sumOfProductQuantity}`;
+    document.getElementById('totalQuantity').innerHTML = sumOfProductQuantity;
 
     quantityInput.addEventListener("change", (e) => {
         e.stopPropagation();
-
         product.quantity = quantityInput.value;
         localStorage.setItem("product", JSON.stringify(storage));
         location.reload();
