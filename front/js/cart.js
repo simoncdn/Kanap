@@ -3,6 +3,10 @@ let storage = JSON.parse(localStorage.getItem("product"));
 let sumOfProductQuantity = 0;
 let totalOfShoppingBag = 0;
 
+let arrProduct = [];
+
+
+
 for (let i = 0; i < storage.length; i++) {
     
     let product = storage[i];
@@ -18,10 +22,14 @@ for (let i = 0; i < storage.length; i++) {
             name.innerHTML = `${data.name}`;
             price.innerHTML = `${data.price} €`;
 
-            totalPerPrice = data.price * parseInt(product.quantity);
-            totalOfShoppingBag += totalPerPrice;
+            totalOfShoppingBag += data.price * parseInt(product.quantity);
+            sumOfProductQuantity += parseInt(product.quantity);
 
             document.getElementById('totalPrice').innerHTML = totalOfShoppingBag;
+            document.getElementById('totalQuantity').innerHTML = sumOfProductQuantity;
+
+            arrProduct[data._id] = data;
+            // allProducts = data;
 
         })
         .catch(err => {
@@ -88,17 +96,6 @@ for (let i = 0; i < storage.length; i++) {
     deleteItem.innerHTML = "Supprimer";
     cartContentDelete.appendChild(deleteItem);
 
-
-    sumOfProductQuantity += parseInt(product.quantity);
-    document.getElementById('totalQuantity').innerHTML = sumOfProductQuantity;
-
-    quantityInput.addEventListener("change", (e) => {
-        e.stopPropagation();
-        product.quantity = quantityInput.value;
-        localStorage.setItem("product", JSON.stringify(storage));
-        location.reload();
-    });
-    
     deleteItem.addEventListener("click", (e) => {
         
         let thisProduct = deleteItem.closest('article');
@@ -113,6 +110,30 @@ for (let i = 0; i < storage.length; i++) {
 }
 
 
+
+let itemQuantity = document.querySelectorAll(".itemQuantity"); 
+    itemQuantity.forEach((item) => {
+        item.addEventListener("change", (e) => {
+            e.preventDefault();
+            let newTotalQuantity = 0;
+            let newTotalPrice = 0;
+            let newTotalOfShoppingBag = 0;
+
+            let selectProduct = storage.find(element => element.idProduct === item.closest('article').dataset.id && element.color === item.closest('article').dataset.color);
+            if (item.value > 0 && item.value <= 100) {
+                selectProduct.quantity = item.value;
+                localStorage.setItem("product", JSON.stringify(storage));
+
+                for (product of storage) {
+                    newTotalQuantity += parseInt(product.quantity);
+                    newTotalPrice = arrProduct[product.idProduct].price * product.quantity;
+                    newTotalOfShoppingBag += newTotalPrice;
+                    }
+            document.getElementById("totalQuantity").innerHTML = newTotalQuantity;
+            document.getElementById('totalPrice').innerHTML = newTotalOfShoppingBag;
+            };
+        });
+    });
 
 // ORDER // 
 
