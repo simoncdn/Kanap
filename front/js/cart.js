@@ -97,7 +97,6 @@ for (let i = 0; i < storage.length; i++) {
     cartContentDelete.appendChild(deleteItem);
 
     deleteItem.addEventListener("click", (e) => {
-        
         let thisProduct = deleteItem.closest('article');
         console.log(product.idProduct);
         thisProduct.remove();
@@ -109,31 +108,29 @@ for (let i = 0; i < storage.length; i++) {
     })
 }
 
-
-
 let itemQuantity = document.querySelectorAll(".itemQuantity"); 
-    itemQuantity.forEach((item) => {
-        item.addEventListener("change", (e) => {
-            e.preventDefault();
-            let newTotalQuantity = 0;
-            let newTotalPrice = 0;
-            let newTotalOfShoppingBag = 0;
+itemQuantity.forEach((item) => {
+    item.addEventListener("change", (e) => {
+        e.preventDefault();
+        let newTotalQuantity = 0;
+        let newTotalPrice = 0;
+        let newTotalOfShoppingBag = 0;
+        let selectProduct = storage.find(element => element.idProduct === item.closest('article').dataset.id && element.color === item.closest('article').dataset.color);
+        if (item.value > 0 && item.value <= 100) {
+            selectProduct.quantity = item.value;
+            localStorage.setItem("product", JSON.stringify(storage));
 
-            let selectProduct = storage.find(element => element.idProduct === item.closest('article').dataset.id && element.color === item.closest('article').dataset.color);
-            if (item.value > 0 && item.value <= 100) {
-                selectProduct.quantity = item.value;
-                localStorage.setItem("product", JSON.stringify(storage));
-
-                for (product of storage) {
-                    newTotalQuantity += parseInt(product.quantity);
-                    newTotalPrice = arrProduct[product.idProduct].price * product.quantity;
-                    newTotalOfShoppingBag += newTotalPrice;
-                    }
+            for (product of storage) {
+                newTotalQuantity += parseInt(product.quantity);
+                newTotalPrice = arrProduct[product.idProduct].price * product.quantity;
+                newTotalOfShoppingBag += newTotalPrice;
+            }
             document.getElementById("totalQuantity").innerHTML = newTotalQuantity;
             document.getElementById('totalPrice').innerHTML = newTotalOfShoppingBag;
-            };
-        });
+        };
     });
+});
+
 
 // ORDER // 
 
