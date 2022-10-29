@@ -1,5 +1,8 @@
-let queryString = window.location.search;
-let id = queryString.slice(4);
+// Récupération de l'id du produit passer dans l'URL
+let currentUrl = window.location.href;
+let url = new URL(currentUrl);
+let orderId = url.searchParams.get("orderId");
 
-let orderId = document.getElementById("orderId");
-orderId.innerHTML = id;
+// affichge de l'order-ID dans l'HTML
+const txtOrderId = document.getElementById('orderId');
+txtOrderId.textContent = orderId;

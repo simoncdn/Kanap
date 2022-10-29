@@ -1,6 +1,7 @@
+// Récuperation du local Storage
 let storage = JSON.parse(localStorage.getItem("product"));
-let allProductsData = [];
 
+// Récupération des produits présents dans l'API
 async function getAllProductsData(){
     const productData = [];
     const res = await fetch(`http://localhost:3000/api/products`)
@@ -17,6 +18,7 @@ async function getAllProductsData(){
     return productData;
 }
 
+// Calcul de la quantitée totale des produits du panier
 function totalQuantity(){
     let totalQuantity = 0;
     storage.forEach(product => {
@@ -25,6 +27,7 @@ function totalQuantity(){
     document.getElementById("totalQuantity").innerText = totalQuantity;
 }
 
+// Calcul du prix total des produits du panier
 function totalPrice(){
     let totalPrice = 0;
     storage.forEach(product => {
@@ -33,6 +36,7 @@ function totalPrice(){
     document.getElementById("totalPrice").innerText = totalPrice;
 }
 
+// Ajout de l'evenement de suppression d'un produit
 function addDeleteProductEvent(){
     document.querySelectorAll(".deleteItem")
     .forEach(item => {
@@ -50,6 +54,8 @@ function addDeleteProductEvent(){
         })
     })
 }
+
+// Recalcul de la nouvelle quantité aprés modification
 function newTotalQuantity(){
     let newTotalQuantity = 0;
     for (product of storage) {
@@ -57,6 +63,8 @@ function newTotalQuantity(){
     }
     document.getElementById("totalQuantity").innerText = newTotalQuantity;
 }
+
+// Recalcul du nouveau prix apres modification
 function newTotalPrice(){
     let newTotalPrice = 0;
     storage.forEach(product => {
@@ -65,6 +73,8 @@ function newTotalPrice(){
     });
     document.getElementById('totalPrice').innerHTML = newTotalPrice;
 }
+
+// Ajout de l'evenement pour changer la quantite d'un produit
 function addChangeQuantityEvent(){
     document.querySelectorAll(".itemQuantity")
     .forEach(item => {
@@ -84,6 +94,9 @@ function addChangeQuantityEvent(){
         })
     })
 }
+
+// Affichage des produits du storage sur la page panier
+let allProductsData = [];
 async function initDisplayProduct(){
     allProductsData = await getAllProductsData();
 
@@ -120,8 +133,145 @@ async function initDisplayProduct(){
     addDeleteProductEvent();
     addChangeQuantityEvent();
 }
-
 initDisplayProduct();
 
+
+// FORM REGEX // 
+// On recupere les elements du dom : input & errorMsg
+let errorMsg = [...document.querySelectorAll(".cart__order__form__question > p")];
+let inputs = [...document.querySelectorAll(".cart__order__form__question > input")];
+
+
+const infoVerification = {
+    firstName: false,
+    lastName: false,
+    address: false,
+    city: false,
+    email: false,
+}
+// On définit la liste des regex a utilisé pour chaque partie du formulaire
+const regexList = { 
+    firstName: /^(?=.{1,20}$)[a-z]+(?:['_.\s][a-z]+)*$/i,
+    lastName: /^(?=.{1,20}$)[a-z]+(?:['_.\s][a-z]+)*$/i,
+    address: /^[a-zA-Z0-9\s,'-]*$/i,
+    city: /^[a-zA-Z\u0080-\u024F]+(?:([\ \-\']|(\.\ ))[a-zA-Z\u0080-\u024F]+)*$/,
+    email: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+}
+
+// Traite les resultats qui ont échoués aux regex
+function failedInputs(){
+    const props = Object.keys(infoVerification);
+    const failedInputs = props.filter(prop => !infoVerification[prop]);
+    if(failedInputs != []){
+        failedInputs.forEach(key => {
+            const index = props.indexOf(key);
+            if (inputs[index].value != "") {
+                displayErr(index);
+            }
+        })
+    }
+}
+// Affiche un message d'erreur
+function displayErr(index){
+    errorMsg[index].textContent = `Les données saisies ne sont pas corrects.`;
+}
+
+// Traite les resultats qui ont réussis les regex 
+function successInputs(){
+    const props = Object.keys(infoVerification);
+    const successInputs = props.filter(prop => infoVerification[prop]);
+    if(successInputs != []){
+        successInputs.forEach(key => {
+            const index = props.indexOf(key);
+
+            if (inputs[index].value != "") {
+                removeDisplayErr(index);
+            }
+        })
+    }
+}
+// Supprime le message d'erreur
+function removeDisplayErr(index){
+    errorMsg[index].textContent = "";
+}
+
+//Passe les inputs correspondant aux regex de la liste
+function regexTest(){
+    let inputsValue = {
+        firstName: firstName.value,
+        lastName: lastName.value,
+        address: address.value,
+        city: city.value,
+        email: email.value,
+    }
+    for (const prop in inputsValue) {
+        if (regexList[prop].test(inputsValue[prop])) {
+            infoVerification[prop] = true;
+        }
+        else{
+            infoVerification[prop] = false;
+        }
+    }
+    failedInputs();
+    successInputs();
+}
+
+// Ajout de l'evenement d'ecoute sur les inputs
+// et appel la fonction RegexTest
+function addInputEvent(inputs){
+    inputs.forEach(input => {
+        input.addEventListener("input", regexTest);
+    });
+}
+addInputEvent(inputs);
+
+// FORM ORDER // 
+
+// On recupere le formulaire du DOM
+let form = document.querySelector(".cart__order__form");
+
+// Envoi de la commande
+function sendCommand(){
+    let contact = {
+        lastName : document.getElementById("lastName").value,
+        firstName : document.getElementById("firstName").value,
+        address : document.getElementById("address").value,
+        city : document.getElementById("city").value,
+        email : document.getElementById("email").value,
+    };
+    
+    let products = [];
+    for (let i = 0; i < storage.length; i++) {
+        products.push(storage[i].idProduct);
+    };
+    fetch ("http://localhost:3000/api/products/order", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+        },
+        body: JSON.stringify({contact, products})
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.location.href=`./confirmation.html?orderId=${data.orderId}`; 
+    })
+}
+
+//On recupere le formulaire
+form.addEventListener("submit", handleForm);
+
+// On parametre la condition d'envoit du formulaire
+function handleForm(e){
+    e.preventDefault();
+
+    const keys = Object.keys(infoVerification)
+    const successInputs = keys.filter(prop => infoVerification[prop]);
+
+    if(successInputs.length === 5){
+        sendCommand();
+        localStorage.clear();
+    }
+}
+ 
 
 
