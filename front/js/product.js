@@ -54,17 +54,20 @@ displayProduct();
 
 // LOCAL STORAGE // 
 
+// Recupere les variables du DOM
 let btnAddToCart = document.querySelector("#addToCart");
 let itemQuantity = document.querySelector("#quantity");
 
-btnAddToCart.addEventListener('click', () => {
+// Ajoute l'evenement click sur le bouton
+btnAddToCart.addEventListener('click', sendToLocalstorage);
 
+// Envoit les données au localstorage
+function sendToLocalstorage(){
     let newProduct = {
         idProduct: id,
         quantity: itemQuantity.value,
         color: colorsSelect.value,
     }
-
     let storage = JSON.parse(localStorage.getItem("product"));
 
     if(itemQuantity.value <= 0 || itemQuantity.value > 100 || colorsSelect.value === ""){
@@ -83,18 +86,22 @@ btnAddToCart.addEventListener('click', () => {
 
                 localStorage.setItem("product", JSON.stringify(storage));
                 productFound = true;
+                
+                console.log("La quantité a changer.");
                 }
             });
 
             if(productFound === false){
                 storage.push(newProduct);
                 localStorage.setItem("product", JSON.stringify(storage));
+                console.log("Ajout d'un nouvel article");
             }
             }else{
                 storage = [];
                 storage.push(newProduct);
                 localStorage.setItem("product", JSON.stringify(storage));
+                console.log("Premier article ajouter au panier");
             }
     }
-})
+}
 

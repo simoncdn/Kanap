@@ -4,7 +4,7 @@ async function getAllProducts(){
     const res = await fetch('http://localhost:3000/api/products');
 
     if(!res.ok){
-            onsole.log(`il y'a eu une erreur : ${err}`);
+            console.log(`il y'a eu une erreur : ${err}`);
     }
     data = await res.json();
     productsData = data;

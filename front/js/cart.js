@@ -40,15 +40,17 @@ function totalPrice(){
 function addDeleteProductEvent(){
     document.querySelectorAll(".deleteItem")
     .forEach(item => {
-    item.addEventListener("click", (e) => {
-        e.preventDefault();
+        item.addEventListener("click", (e) => {
 
-        let deleteProduct = document.querySelector(".deleteItem").closest("article");
-        deleteProduct.remove();
+            e.preventDefault();
+            
+            let deleteProduct = document.querySelector(".deleteItem").closest("article");
+            deleteProduct.remove();
 
-        newStorage = storage.filter(product => 
-            product.idProduct !== item.closest('article').dataset.id || product.color !== item.closest('article').dataset.color);
+            newStorage = storage.filter(product => 
+                product.idProduct !== item.closest('article').dataset.id || product.color !== item.closest('article').dataset.color);
             localStorage.setItem("product", JSON.stringify(newStorage));
+
             location.reload();
             e.stopPropagation();
         })
