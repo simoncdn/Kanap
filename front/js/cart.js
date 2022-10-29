@@ -226,10 +226,6 @@ function addInputEvent(inputs){
 addInputEvent(inputs);
 
 // FORM ORDER // 
-
-// On recupere le formulaire du DOM
-let form = document.querySelector(".cart__order__form");
-
 // Envoi de la commande
 function sendCommand(){
     let contact = {
@@ -257,7 +253,10 @@ function sendCommand(){
     })
 }
 
-//On recupere le formulaire
+// On recupere le formulaire du DOM
+let form = document.querySelector(".cart__order__form");
+
+// Ajout de l'evenement submit sur le formulaire
 form.addEventListener("submit", handleForm);
 
 // On parametre la condition d'envoit du formulaire
@@ -272,6 +271,3 @@ function handleForm(e){
         localStorage.clear();
     }
 }
- 
-
-

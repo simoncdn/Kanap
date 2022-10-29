@@ -10,7 +10,8 @@ async function getProductData(){
     const res = await fetch(`http://localhost:3000/api/products/${id}`)
     
     if (!res.ok) {
-        console.log(`Il y a eu une erreur`);
+        console.log(`Il y a eu une erreur: ${err}`);
+        alert("Probleme de connexion, Veuillez nous excuser.");
         return [];
     };
 
