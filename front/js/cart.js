@@ -82,7 +82,7 @@ function addChangeQuantityEvent(){
     .forEach(item => {
         item.addEventListener("change", (e) => {
             e.preventDefault();
-            
+
             let selectProduct = storage.find(element => element.idProduct === item.closest('article').dataset.id && element.color === item.closest('article').dataset.color);
             if (item.value > 0 && item.value <= 100) {
                 selectProduct.quantity = item.value;
@@ -273,5 +273,6 @@ function handleForm(e){
     if(successInputs.length === 5){
         sendCommand();
         localStorage.clear();
+        console.log("Commande envoyée / LocalStorage clear.");
     }
 }
