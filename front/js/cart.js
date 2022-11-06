@@ -43,11 +43,12 @@ function addDeleteProductEvent(){
         item.addEventListener("click", (e) => {
 
             e.preventDefault();
-            
+
             let deleteProduct = document.querySelector(".deleteItem").closest("article");
             deleteProduct.remove();
+            
 
-            newStorage = storage.filter(product => 
+            newStorage = storage.filter(product =>
                 product.idProduct !== item.closest('article').dataset.id || product.color !== item.closest('article').dataset.color);
             localStorage.setItem("product", JSON.stringify(newStorage));
 
@@ -70,8 +71,7 @@ function newTotalQuantity(){
 function newTotalPrice(){
     let newTotalPrice = 0;
     storage.forEach(product => {
-        newPricePerProduct = allProductsData[product.idProduct].price * parseInt(product.quantity);
-        newTotalPrice += newPricePerProduct;
+        newTotalPrice += allProductsData[product.idProduct].price * parseInt(product.quantity);
     });
     document.getElementById('totalPrice').innerHTML = newTotalPrice;
 }
@@ -82,6 +82,7 @@ function addChangeQuantityEvent(){
     .forEach(item => {
         item.addEventListener("change", (e) => {
             e.preventDefault();
+            
             let selectProduct = storage.find(element => element.idProduct === item.closest('article').dataset.id && element.color === item.closest('article').dataset.color);
             if (item.value > 0 && item.value <= 100) {
                 selectProduct.quantity = item.value;
@@ -91,7 +92,7 @@ function addChangeQuantityEvent(){
                 newTotalPrice();
 
             }else{
-                console.log("remplissez une quantitée entre 1 et 100, Merci !");
+                alerte("remplissez une quantitée entre 1 et 100, Merci !");
             }
         })
     })
@@ -169,6 +170,7 @@ function failedInputs(){
             const index = props.indexOf(key);
             if (inputs[index].value != "") {
                 displayErr(index);
+                console.log(key);
             }
         })
     }
@@ -185,8 +187,7 @@ function successInputs(){
     if(successInputs != []){
         successInputs.forEach(key => {
             const index = props.indexOf(key);
-
-            if (inputs[index].value != "") {
+            if (inputs[index].value != "" && errorMsg[index].textContent != "") {
                 removeDisplayErr(index);
             }
         })
@@ -209,13 +210,13 @@ function regexTest(){
     for (const prop in inputsValue) {
         if (regexList[prop].test(inputsValue[prop])) {
             infoVerification[prop] = true;
+            successInputs();
         }
         else{
             infoVerification[prop] = false;
+            failedInputs();
         }
     }
-    failedInputs();
-    successInputs();
 }
 
 // Ajout de l'evenement d'ecoute sur les inputs
@@ -253,6 +254,7 @@ function sendCommand(){
     .then(data => {
         document.location.href=`./confirmation.html?orderId=${data.orderId}`; 
     })
+    .catch(error => console.log(error))
 }
 
 // On recupere le formulaire du DOM

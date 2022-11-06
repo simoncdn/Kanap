@@ -1,7 +1,10 @@
 // Récupération de l'id du produit passer dans l'URL
 let currentUrl = window.location.href;
+// console.log(currentUrl);
 let url = new URL(currentUrl);
+// console.log(url);
 const id = url.searchParams.get('id');
+// console.log(id);
 
 productData = [];
 // Récupération des données du produit
@@ -15,22 +18,20 @@ async function getProductData(){
         return [];
     };
 
-    const data = await res.json();
-    newproductData = data;
+    newproductData = await res.json();
     return newproductData;
 }
 
 // Affichage du produit
 let colorsSelect = document.getElementById("colors");
-colorsSelect.remove(2);
-colorsSelect.remove(1);
+let itemImg = document.querySelector(".item__img");
 async function displayProduct(){
     productData = await getProductData();
 
-    document.querySelector("article div.item__img > img")
-    .setAttribute('src', `${productData.imageUrl}`);
-    document.querySelector("article div.item__img > img")
-    .setAttribute('alt', `${productData.altTxt}`);
+    let img = document.createElement("img");
+    img.setAttribute('src', `${productData.imageUrl}`);
+    img.setAttribute('alt', `${productData.altTxt}`);
+    itemImg.appendChild(img);
 
     document.querySelector("#title")
     .textContent = `${productData.name}`
@@ -69,7 +70,7 @@ function sendToLocalstorage(){
         color: colorsSelect.value,
     }
     let storage = JSON.parse(localStorage.getItem("product"));
-
+    console.log(storage);
     if(itemQuantity.value <= 0 || itemQuantity.value > 100 || colorsSelect.value === ""){
         alert("Veuillez selectionner une couleur valide et une quantité comprise entre 1-100.");
     }else{
@@ -96,12 +97,12 @@ function sendToLocalstorage(){
                 localStorage.setItem("product", JSON.stringify(storage));
                 console.log("Ajout d'un nouvel article");
             }
-            }else{
+        }else{
                 storage = [];
                 storage.push(newProduct);
                 localStorage.setItem("product", JSON.stringify(storage));
                 console.log("Premier article ajouter au panier");
-            }
+        }
     }
 }
 

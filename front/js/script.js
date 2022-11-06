@@ -6,9 +6,7 @@ async function getAllProducts(){
     if(!res.ok){
             console.log(`il y'a eu une erreur : ${err}`);
     }
-    data = await res.json();
-    productsData = data;
-
+    productsData = await res.json();
     return productsData;
 }
 
